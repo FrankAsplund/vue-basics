@@ -1,64 +1,86 @@
 <script>
+import axios from "axios";
 import Card from "../components/Card.vue";
 import CreateCard from "../components/CreateCard.vue";
+
 export default {
   components: {
     Card,
-    CreateCard
-},
+    CreateCard,
+  },
 
   data() {
     return {
-      posts: []
-      }
-    },
+      posts: [],
+    };
+  },
 
-    mounted() {
-      fetch("http://localhost:3000/posts")
-      .then(res => res.json())
-      .then(data => this.posts = data)
-      .catch(err => console.log(err.message))
-    }
-  }
+  methods: {
+    getPosts() {
+      axios
+        .get("http://localhost:3000/posts")
+        .then((response) => {
+          console.log(response.data);
+          this.posts = response.data;
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
+    },
+  },
+
+  /* mounted() {
+    getPosts();
+  }, */
+};
+
+/* mounted() {
+    axios
+        .get("http://localhost:3000/posts")
+        .then((res) => res.json())
+        .then((data) => (this.posts = data))
+        .catch((err) => console.log(err.message));
+    },
+  } */
+
+/* Deletes an entry in the database */
+/* function deleteData = (id) => {
+    axios
+      .delete(`http://localhost:3000/posts/${id}`)
+      .then(function (response) {
+        console.log("Deleted", response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  } */
 </script>
 
 <template>
-  
   <div class="home">
-
+    <h1>Posts</h1>
     <div class="home-container">
-      
-      <h1>Test Home</h1>
-      <p> Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
-        Dolorem, voluptates. Iusto temporibus animi deleniti. 
-        Praesentium rem consectetur numquam debitis quidem quam recusandae assumenda, 
-        consequuntur eligendi, dolorem optio officiis iure dignissimos.</p>
-    </div>
-
-    <div class="center">
+      <p>
+        Create a new post by writing a title, and add text in the input fields.
+        Submit the post by pressing the submit button.
+      </p>
       <CreateCard />
     </div>
 
-      <div v-for="post in posts" :key="post.id" class="container">
-        
-        <div class="card-container">
-          <h1 class="card-h1"> {{post.id}}</h1>
-      <div class="card-title">{{ post.title }}</div>
-      <div class="card-text">{{ post.text }}</div>
+    <button @click="getPosts">Load Posts</button>
+
+    <div v-for="post in posts" :key="post.id" class="container">
+      <div class="card-container">
+        <h1 class="card-h1">{{ post.id }}</h1>
+        <div class="card-title">{{ post.title }}</div>
+        <div class="card-text">{{ post.text }}</div>
+        <!-- <button @click="deleteData"></button> -->
+      </div>
     </div>
-    
-    
-    
   </div>
-
-  </div>
-
-
-    
 </template>
 
 <style scoped>
-
 .center {
   display: flex;
   justify-content: center;
@@ -75,8 +97,14 @@ h1 {
   justify-content: center;
 }
 
+.home-container > p {
+  height: 100px;
+  width: 300px;
+}
 
 .home-container {
+  display: flex;
+  flex-direction: column;
   position: relative;
   margin: 3rem 0 3rem 0;
 }
@@ -99,12 +127,10 @@ h1 {
   align-items: center; */
 }
 .card-container {
-    
   padding: 10px;
   align-items: center;
   display: flex;
   flex-direction: column;
-
 
   border-style: none;
   background-color: rgba(112, 128, 144, 0.14);
@@ -114,7 +140,8 @@ h1 {
 }
 
 .card-container:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+  background-color: hsla(160, 100%, 37%, 0.2);
+  transition: 0.4s ease-in-out;
 }
 .card-title {
   font-size: 20px;
@@ -141,16 +168,15 @@ h1 {
   overflow-x: hidden;
   width: 10px;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888; 
+  background: #888;
   size: 3px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+  background: #555;
 }
-
 </style>
