@@ -27,33 +27,29 @@ export default {
           console.log(error.message);
         });
     },
+
+    /* Deletes an entry in the database */
+    deleteData(id) {
+      axios
+        .delete(`http://localhost:3000/posts/${id}`)
+        .then((response) => {
+          console.log(response);
+          this.posts = response.data;
+        })
+        .catch(function (error) {
+          console.log(error.response);
+        });
+    },
   },
 
-  /* mounted() {
-    getPosts();
-  }, */
+  mounted() {
+    console.log("mounted");
+    axios
+      .get("http://localhost:3000/posts")
+      .then((data) => (this.posts = data))
+      .catch((err) => console.log(err.message));
+  },
 };
-
-/* mounted() {
-    axios
-        .get("http://localhost:3000/posts")
-        .then((res) => res.json())
-        .then((data) => (this.posts = data))
-        .catch((err) => console.log(err.message));
-    },
-  } */
-
-/* Deletes an entry in the database */
-/* function deleteData = (id) => {
-    axios
-      .delete(`http://localhost:3000/posts/${id}`)
-      .then(function (response) {
-        console.log("Deleted", response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  } */
 </script>
 
 <template>
@@ -65,16 +61,17 @@ export default {
         Submit the post by pressing the submit button.
       </p>
       <CreateCard />
+      <button class="card-button" @click="getPosts">Load Posts</button>
     </div>
-
-    <button @click="getPosts">Load Posts</button>
 
     <div v-for="post in posts" :key="post.id" class="container">
       <div class="card-container">
         <h1 class="card-h1">{{ post.id }}</h1>
         <div class="card-title">{{ post.title }}</div>
         <div class="card-text">{{ post.text }}</div>
-        <!-- <button @click="deleteData"></button> -->
+        <button class="card-button" @click="deleteData(post.id)">
+          Delete post
+        </button>
       </div>
     </div>
   </div>
@@ -102,6 +99,23 @@ h1 {
   width: 300px;
 }
 
+.card-button {
+  align-items: center;
+  margin-top: 1rem;
+  font: bolder;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  padding: 5px;
+  width: 11rem;
+  height: 2rem;
+  border-radius: 25px;
+  background-color: hsla(160, 100%, 37%, 0.2);
+}
+
+.card-button:hover {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
 .home-container {
   display: flex;
   flex-direction: column;
@@ -123,8 +137,6 @@ h1 {
   display: grid;
   float: left;
   margin: 10px;
-  /* justify-content: flex-start;
-  align-items: center; */
 }
 .card-container {
   padding: 10px;
@@ -145,7 +157,7 @@ h1 {
 }
 .card-title {
   font-size: 20px;
-  margin-right: 10px;
+  margin: 10px 0 5px 0;
 }
 
 .card-text {
